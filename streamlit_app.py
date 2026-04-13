@@ -23,7 +23,8 @@ items_dict = {
     "Tornister": [43773, # Himmlische aufwendige Mull-Insignie (Wichtigstes Item!)
         23001, # Aufwendiger Schuppen-Tornister-Gurt (Schwer)
         22999, # Aufwendiger Leder-Tornister-Gurt (Mittel)
-        23000  # Aufwendiger Stoff-Tornister-Gurt (Leicht)]
+        23000  # Aufwendiger Stoff-Tornister-Gurt (Leicht)
+        ]
 }
 # Alle IDs sammeln
 all_ids = [idx for sublist in items_dict.values() for idx in sublist]
