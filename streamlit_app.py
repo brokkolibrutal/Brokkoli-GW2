@@ -2,92 +2,113 @@ import streamlit as st
 import requests
 import pandas as pd
 
-# Konfiguration der Seite
-st.set_page_config(page_title="GW2 Himmlisch Prunkvoll Monitor", layout="wide")
+# Konfiguration der Seite (Wide Mode für bessere Tabellenansicht)
+st.set_page_config(page_title="GW2 Celestial Monitor", layout="wide", page_icon="🛡️")
 
-def format_gw2_price(coins):
-    if not coins or coins == 0: return "Nicht gelistet"
+def format_gw2_price_fancy(coins):
+    """Wandelt Coins in Gold, Silber, Kupfer mit Symbolen um."""
+    if not coins or coins == 0: 
+        return "---"
+    
     gold = coins // 10000
     silver = (coins % 10000) // 100
     copper = coins % 100
-    return f"**{gold}g {silver}s {copper}c**"
-
-st.title("🛡️ GW2 Preis-Monitor: Himmlisch Prunkvoll")
-st.markdown("Anzeige der Preise für **Himmlisch Prunkvolle** (Leicht), **Prunkvolle** (Mittel/Schwer) Exotische Sets.")
-
-# Item-IDs für die "Prunkvollen" Sets (Exotisch, Stufe 80, Himmlisch)
-# Final korrigierte Item-IDs nach Handwerksklasse
-items_dict = {
-    "Leicht (Himmlisch Erhaben)": [43788, 43789, 43785, 43786, 43790, 43787],
-    "Mittel (Himmlisch Prunkvoll)": [43794, 43795, 43791, 43792, 43796, 43793],
-    "Schwer (Himmlisch Drakonisch)": [43780, 43779, 43782, 43781, 43783, 43784],
-    "Tornister": [23044, 23045, 23046] # Stoff, Leder, Schuppen
-}
-# Alle IDs sammeln
-all_ids = [idx for sublist in items_dict.values() for idx in sublist]
-ids_str = ",".join(map(str, all_ids))
-
-@st.cache_data(ttl=300)
-def get_gw2_data(ids):
-    # Preise abrufen
-    prices_res = requests.get(f"https://api.guildwars2.com/v2/commerce/prices?ids={ids}")
-    # Items abrufen mit lang=de für deutsche Namen
-    items_res = requests.get(f"https://api.guildwars2.com/v2/items?ids={ids}&lang=de")
     
-    return items_res.json(), prices_res.json()
-
-if st.button('Preise jetzt aktualisieren'):
-    try:
-        items_data, prices_data = get_gw2_data(ids_str)
+    parts = []
+    if gold > 0:
+        parts.append(f"{gold} 🟡")
+    if silver > 0:
+        parts.append(f"{silver} ⚪")
+    if copper > 0 or not parts:
+        parts.append(f"{copper} 🟤")
         
-        # Mapping erstellen für schnellen Zugriff
-        price_map = {p['id']: p for p in prices_data}
-        item_map = {i['id']: i for i in items_data}
+    return " ".join(parts)
 
+# --- ITEM KONFIGURATION ---
+# Deine korrigierten IDs für Schwer (Drakonisch) sind hier enthalten!
+items_dict = {
+    "Leicht (Erhaben)": [43788, 43789, 43785, 43786, 43790, 43787],
+    "Mittel (Prunkvoll)": [43794, 43795, 43791, 43792, 43796, 43793],
+    "Schwer (Drakonisch)": [43782, 43784, 43779, 43781, 43783, 43780],
+    "Tornister & Zubehör": [43773, 23044, 23045, 23046]
+}
+
+# Flache Liste aller IDs für die API-Abfrage
+all_ids = [idx for sublist in items_dict.values() for idx in sublist]
+
+st.title("🛡️ GW2 Himmlischer Rüstungs-Monitor")
+st.markdown(f"Verfolgt die aktuellen Marktpreise für deine Sets auf **Deutsch**.")
+
+# --- DATENABFRAGE ---
+@st.cache_data(ttl=300)
+def get_api_data(ids):
+    ids_str = ",".join(map(str, ids))
+    # Items mit lang=de für deutsche Namen
+    items = requests.get(f"https://api.guildwars2.com/v2/items?ids={ids_str}&lang=de").json()
+    # Preise vom Handelsposten
+    try:
+        prices = requests.get(f"https://api.guildwars2.com/v2/commerce/prices?ids={ids_str}").json()
+    except:
+        prices = []
+    return items, prices
+
+if st.button('🔄 Preise jetzt aktualisieren'):
+    with st.spinner('Lade Marktdaten...'):
+        items_data, prices_data = get_api_data(all_ids)
+        
+        # Mapping für schnellen Zugriff
+        item_map = {i['id']: i for i in items_data}
+        price_map = {p['id']: p for p in prices_data}
+
+        # Tabs für die Rüstungsklassen
         tabs = st.tabs(list(items_dict.keys()))
 
         for tab, (category, ids) in zip(tabs, items_dict.items()):
             with tab:
-                category_list = []
-                total_sell_price = 0
+                display_list = []
+                total_set_cost = 0
                 
                 for item_id in ids:
-                    if item_id in item_map and item_id in price_map:
-                        item = item_map[item_id]
-                        price = price_map[item_id]
-                        unit_price = price['sells']['unit_price']
-                        total_sell_price += unit_price
-                        
-                        category_list.append({
-                            "Icon": item['icon'],
-                            "Name": item['name'],
-                            "Sofort-Kauf": format_gw2_price(unit_price),
-                            "Höchstgebot": format_gw2_price(price['buys']['unit_price']),
-                            "Bestand": price['sells']['quantity']
-                        })
+                    item = item_map.get(item_id, {})
+                    price = price_map.get(item_id, {})
+                    
+                    name = item.get('name', f"ID: {item_id}")
+                    icon = item.get('icon', "")
+                    
+                    sell_raw = price.get('sells', {}).get('unit_price', 0)
+                    buy_raw = price.get('buys', {}).get('unit_price', 0)
+                    quantity = price.get('sells', {}).get('quantity', 0)
+                    
+                    if category != "Tornister & Zubehör":
+                        total_set_cost += sell_raw
+
+                    display_list.append({
+                        "Icon": icon,
+                        "Gegenstand": name,
+                        "Sofort-Kauf": format_gw2_price_fancy(sell_raw),
+                        "Höchstgebot": format_gw2_price_fancy(buy_raw),
+                        "Bestand": f"{quantity} Stk."
+                    })
                 
                 # Tabelle anzeigen
-                df = pd.DataFrame(category_list)
+                df = pd.DataFrame(display_list)
                 st.data_editor(
                     df,
                     column_config={
-                        "Icon": st.column_config.ImageColumn(" ", width="small"),
-                        "Name": st.column_config.TextColumn("Gegenstand", width="large")
+                        "Icon": st.column_config.ImageColumn("", width="small"),
+                        "Gegenstand": st.column_config.TextColumn("Gegenstand", width="large"),
                     },
                     use_container_width=True,
-                    key=f"table_{category}",
+                    hide_index=True,
                     disabled=True,
-                    hide_index=True
+                    key=f"df_{category}"
                 )
                 
-                # Zusammenfassung der Set-Kosten
-                if category != "Tornister (Rücken)":
-                    st.metric("Gesamtkosten für dieses Set (Sofort-Kauf)", format_gw2_price(total_sell_price).replace("*", ""))
-
-    except Exception as e:
-        st.error(f"Fehler beim Abrufen der Daten: {e}")
+                # Gesamtpreis-Anzeige für das Set
+                if category != "Tornister & Zubehör" and total_set_cost > 0:
+                    st.write(f"### 💰 Gesamtwert dieses Sets (Sofort-Kauf): {format_gw2_price_fancy(total_set_cost)}")
 else:
-    st.info("Bitte Button klicken, um die deutschen Item-Daten zu laden.")
+    st.info("Klicke auf den Button oben, um die aktuellen Preise aus Tyria zu laden.")
 
 st.divider()
-st.caption("Datenquelle: Offizielle GW2 API | Sprache: Deutsch")
+st.caption("Datenquelle: Offizielle Guild Wars 2 API. Die Gold-Symbole werden als Emojis dargestellt.")
