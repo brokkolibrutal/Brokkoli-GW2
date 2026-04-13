@@ -21,7 +21,7 @@ items_dict = {
     "Mittel (Himmlisch Prunkvoll)": [43794, 43795, 43791, 43792, 43796, 43793],
     "Schwer (Himmlisch Prunkvoll)": [43800, 43801, 43797, 43798, 43802, 43799],
     "Tornister (Rücken)": [23045, 23044, 23046]
-
+}
 # Alle IDs sammeln
 all_ids = [idx for sublist in items_dict.values() for idx in sublist]
 ids_str = ",".join(map(str, all_ids))
