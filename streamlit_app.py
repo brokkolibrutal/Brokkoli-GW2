@@ -20,7 +20,13 @@ st.markdown("Anzeige der Preise für **Himmlisch Prunkvolle** (Leicht), **Prunkv
 items_dict = {
     "Leicht (Himmlisch Erhaben)": [43788, 43789, 43785, 43786, 43790, 43787],
     "Mittel (Himmlisch Prunkvoll)": [43794, 43795, 43791, 43792, 43796, 43793],
-    "Schwer (Himmlisch Drakonisch)": [43800, 43801, 43797, 43798, 43802, 43799],
+    "Schwer (Himmlisch Drakonisch)": [
+        43825, # Rezept: Helm
+        43826, # Rezept: Schultern
+        43822, # Rezept: Brust
+        43823, # Rezept: Handschuhe
+        43827, # Rezept: Hose
+        43824], # Rezept: Stiefel,
     "Tornister": [23044, 23045, 23046] # Stoff, Leder, Schuppen
 }
 # Alle IDs sammeln
