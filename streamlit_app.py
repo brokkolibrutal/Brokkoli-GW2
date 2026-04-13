@@ -36,7 +36,7 @@ items_dict = {
 # Flache Liste aller IDs für die API-Abfrage
 all_ids = [idx for sublist in items_dict.values() for idx in sublist]
 
-st.title("🛡️ GW2 Himmlischer Rüstungs-Monitor")
+st.title("🛡️ GW2 "Himmlisch" Rüstungs-Monitor")
 st.markdown(f"Verfolgt die aktuellen Marktpreise für deine Sets auf **Deutsch**.")
 
 # --- DATENABFRAGE ---
