@@ -16,15 +16,12 @@ st.title("🛡️ GW2 Preis-Monitor: Himmlisch Prunkvoll")
 st.markdown("Anzeige der Preise für **Himmlisch Prunkvolle** (Leicht), **Prunkvolle** (Mittel/Schwer) Exotische Sets.")
 
 # Item-IDs für die "Prunkvollen" Sets (Exotisch, Stufe 80, Himmlisch)
+# Final korrigierte Item-IDs nach Handwerksklasse
 items_dict = {
-    "Leicht (Himmlisch Prunkvoll)": [43788, 43789, 43785, 43786, 43790, 43787],
+    "Leicht (Himmlisch Erhaben)": [43788, 43789, 43785, 43786, 43790, 43787],
     "Mittel (Himmlisch Prunkvoll)": [43794, 43795, 43791, 43792, 43796, 43793],
-    "Schwer (Himmlisch Prunkvoll)": [43800, 43801, 43797, 43798, 43802, 43799],
-    "Tornister": [43773, # Himmlische aufwendige Mull-Insignie (Wichtigstes Item!)
-        23001, # Aufwendiger Schuppen-Tornister-Gurt (Schwer)
-        22999, # Aufwendiger Leder-Tornister-Gurt (Mittel)
-        23000  # Aufwendiger Stoff-Tornister-Gurt (Leicht)
-        ]
+    "Schwer (Himmlisch Drakonisch)": [43800, 43801, 43797, 43798, 43802, 43799],
+    "Tornister": [23044, 23045, 23046] # Stoff, Leder, Schuppen
 }
 # Alle IDs sammeln
 all_ids = [idx for sublist in items_dict.values() for idx in sublist]
