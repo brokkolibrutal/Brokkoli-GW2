@@ -27,7 +27,7 @@ def format_gw2_price_fancy(coins):
 # --- ITEM KONFIGURATION ---
 # Deine korrigierten IDs für Schwer (Drakonisch) sind hier enthalten!
 items_dict = {
-    "Leicht (Erhaben)": [43788, 43789, 43803, 43786, 43790, 43787],
+    "Leicht (Erhaben)": [43788, 43789, 43791, 43786, 43790, 43787],
     "Mittel (Prunkvoll)": [43794, 43795, 43797, 43792, 43796, 43793],
     "Schwer (Drakonisch)": [43782, 43784, 43783, 43781, 43783, 43780],
     "Tornister & Zubehör": [43773, 23044, 23045, 23046]
