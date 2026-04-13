@@ -17,11 +17,10 @@ st.markdown("Anzeige der Preise für **Himmlisch Prunkvolle** (Leicht), **Prunkv
 
 # Item-IDs für die "Prunkvollen" Sets (Exotisch, Stufe 80, Himmlisch)
 items_dict = {
-    "Leicht (Himmlisch Prunkvoll)": [11504, 11506, 11501, 11502, 11505, 11503],
-    "Mittel (Himmlisch Prunkvoll)": [11639, 11641, 11636, 11637, 11640, 11638],
-    "Schwer (Himmlisch Prunkvoll)": [11891, 11893, 11888, 11889, 11892, 11890],
+    "Leicht (Himmlisch Prunkvoll)": [43788, 43789, 43785, 43786, 43790, 43787],
+    "Mittel (Himmlisch Prunkvoll)": [43794, 43795, 43791, 43792, 43796, 43793],
+    "Schwer (Himmlisch Prunkvoll)": [43800, 43801, 43797, 43798, 43802, 43799],
     "Tornister (Rücken)": [23045, 23044, 23046]
-}
 
 # Alle IDs sammeln
 all_ids = [idx for sublist in items_dict.values() for idx in sublist]
